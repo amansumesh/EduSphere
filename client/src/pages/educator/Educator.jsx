@@ -1,0 +1,22 @@
+import React from 'react'
+import { Outlet } from 'react-router-dom'
+import SideBar from '../../components/educator/SideBar'
+import Navbar from '../../components/educator/Navbar'
+import Footer from '../../components/educator/Footer'
+
+const Educator = () => {
+    return (
+        <div className="min-h-screen bg-brand-black text-white bg-brand-gradient">
+            <Navbar />
+            <div className='flex'>
+                <SideBar />
+                <div className='flex-1'>
+                    {<Outlet />}
+                </div>
+            </div>
+            <Footer />
+        </div>
+    )
+}
+
+export default Educator
