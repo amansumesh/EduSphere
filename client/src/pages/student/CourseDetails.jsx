@@ -9,6 +9,7 @@ import humanizeDuration from 'humanize-duration'
 import YouTube from 'react-youtube';
 import { useAuth } from '@clerk/clerk-react';
 import Loading from '../../components/student/Loading';
+import { getYouTubeVideoId, previewYouTubeOptions } from '../../utils/youtubeUtils';
 
 const CourseDetails = () => {
 
@@ -20,6 +21,7 @@ const CourseDetails = () => {
 
   const { backendUrl, currency, userData, calculateChapterTime, calculateCourseDuration, calculateRating, calculateNoOfLectures } = useContext(AppContext)
   const { getToken } = useAuth()
+
 
 
   const fetchCourseData = async () => {
@@ -145,9 +147,15 @@ const CourseDetails = () => {
                           <div className="flex items-center justify-between w-full text-white text-xs md:text-default">
                             <p>{lecture.lectureTitle}</p>
                             <div className='flex gap-2'>
-                              {lecture.isPreviewFree && <p onClick={() => setPlayerData({
-                                videoId: lecture.lectureUrl.split('/').pop()
-                              })} className='text-brand-pink-400 cursor-pointer'>Preview</p>}
+                              {isAlreadyEnrolled ? (
+                                <p onClick={() => setPlayerData({
+                                  videoId: getYouTubeVideoId(lecture.lectureUrl)
+                                })} className='text-brand-pink-400 cursor-pointer'>Watch</p>
+                              ) : (
+                                lecture.isPreviewFree && <p onClick={() => setPlayerData({
+                                  videoId: getYouTubeVideoId(lecture.lectureUrl)
+                                })} className='text-brand-pink-400 cursor-pointer'>Preview</p>
+                              )}
                               <p>{humanizeDuration(lecture.lectureDuration * 60 * 1000, { units: ['h', 'm'] })}</p>
                             </div>
                           </div>
@@ -170,7 +178,11 @@ const CourseDetails = () => {
         <div className="max-w-course-card z-10 shadow-custom-card rounded-t md:rounded-none overflow-hidden bg-white/5 border border-white/10 min-w-[300px] sm:min-w-[420px]">
           {
             playerData
-              ? <YouTube videoId={playerData.videoId} opts={{ playerVars: { autoplay: 1 } }} iframeClassName='w-full aspect-video' />
+              ? <YouTube 
+                  videoId={playerData.videoId} 
+                  opts={previewYouTubeOptions} 
+                  iframeClassName='w-full aspect-video' 
+                />
               : <img src={courseData.courseThumbnail} alt="" />
           }
           <div className="p-5">

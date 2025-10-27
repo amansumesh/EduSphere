@@ -9,6 +9,7 @@ import { toast } from 'react-toastify';
 import Rating from '../../components/student/Rating';
 import Footer from '../../components/student/Footer';
 import Loading from '../../components/student/Loading';
+import { getYouTubeVideoId, defaultYouTubeOptions } from '../../utils/youtubeUtils';
 
 const Player = ({ }) => {
 
@@ -20,6 +21,7 @@ const Player = ({ }) => {
   const [openSections, setOpenSections] = useState({});
   const [playerData, setPlayerData] = useState(null);
   const [initialRating, setInitialRating] = useState(0);
+
 
   const getCourseData = () => {
     enrolledCourses.map((course) => {
@@ -176,7 +178,11 @@ const Player = ({ }) => {
           playerData
             ? (
               <div>
-                <YouTube iframeClassName='w-full aspect-video' videoId={playerData.lectureUrl.split('/').pop()} />
+                <YouTube 
+                  iframeClassName='w-full aspect-video' 
+                  videoId={getYouTubeVideoId(playerData.lectureUrl)}
+                  opts={defaultYouTubeOptions}
+                />
                 <div className='flex justify-between items-center mt-1'>
                   <p className='text-xl '>{playerData.chapter}.{playerData.lecture} {playerData.lectureTitle}</p>
                   <button onClick={() => markLectureAsCompleted(playerData.lectureId)} className='btn-outline-light px-3 py-1 rounded'>{progressData && progressData.lectureCompleted.includes(playerData.lectureId) ? 'Completed' : 'Mark Complete'}</button>
