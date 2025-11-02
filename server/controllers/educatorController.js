@@ -61,6 +61,60 @@ export const addCourse = async (req, res) => {
     }
 }
 
+// Update existing Course (owned by educator)
+export const updateCourse = async (req, res) => {
+    try {
+        const educatorId = req.auth.userId
+        const { id } = req.params
+        const allowed = ['courseTitle', 'coursePrice', 'discount', 'tags', 'isPublished']
+        const updates = {}
+        for (const key of allowed) {
+            if (key in req.body) updates[key] = req.body[key]
+        }
+
+        const course = await Course.findOne({ _id: id, educator: educatorId })
+        if (!course) return res.json({ success: false, message: 'Course not found or not owned' })
+
+        Object.assign(course, updates)
+        await course.save()
+        return res.json({ success: true, message: 'Course updated', course })
+    } catch (error) {
+        return res.json({ success: false, message: error.message })
+    }
+}
+
+// Get full course (raw) for educator editing
+export const getCourseRaw = async (req, res) => {
+    try {
+        const educatorId = req.auth.userId
+        const { id } = req.params
+        const course = await Course.findOne({ _id: id, educator: educatorId })
+        if (!course) return res.json({ success: false, message: 'Course not found or not owned' })
+        return res.json({ success: true, course })
+    } catch (error) {
+        return res.json({ success: false, message: error.message })
+    }
+}
+
+// Update course curriculum (chapters/lectures)
+export const updateCourseCurriculum = async (req, res) => {
+    try {
+        const educatorId = req.auth.userId
+        const { id } = req.params
+        const { courseContent } = req.body
+        if (!Array.isArray(courseContent)) {
+            return res.json({ success: false, message: 'Invalid courseContent' })
+        }
+        const course = await Course.findOne({ _id: id, educator: educatorId })
+        if (!course) return res.json({ success: false, message: 'Course not found or not owned' })
+        course.courseContent = courseContent
+        await course.save()
+        return res.json({ success: true, message: 'Curriculum updated' })
+    } catch (error) {
+        return res.json({ success: false, message: error.message })
+    }
+}
+
 // Get Educator Courses
 export const getEducatorCourses = async (req, res) => {
     try {

@@ -16,6 +16,7 @@ const AddCourse = () => {
   const [courseTitle, setCourseTitle] = useState('')
   const [coursePrice, setCoursePrice] = useState(0)
   const [discount, setDiscount] = useState(0)
+  const [tagsInput, setTagsInput] = useState('')
   const [image, setImage] = useState(null)
   const [chapters, setChapters] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
@@ -105,6 +106,7 @@ const AddCourse = () => {
         coursePrice: Number(coursePrice),
         discount: Number(discount),
         courseContent: chapters,
+        tags: tagsInput.split(',').map(t => t.trim()).filter(Boolean),
       }
 
       const formData = new FormData()
@@ -122,6 +124,7 @@ const AddCourse = () => {
         setCourseTitle('')
         setCoursePrice(0)
         setDiscount(0)
+        setTagsInput('')
         setImage(null)
         setChapters([])
         quillRef.current.root.innerHTML = ""
@@ -175,6 +178,17 @@ const AddCourse = () => {
               <img className='max-h-10' src={image ? URL.createObjectURL(image) : ''} alt="" />
             </label>
           </div>
+        </div>
+
+        <div className='flex flex-col gap-1'>
+          <p>Tags (comma-separated)</p>
+          <input
+            value={tagsInput}
+            onChange={(e) => setTagsInput(e.target.value)}
+            type="text"
+            placeholder='e.g. javascript, frontend, react'
+            className='outline-none md:py-2.5 py-2 px-3 rounded border border-white/20 bg-white/5 placeholder-gray-400'
+          />
         </div>
 
         <div className='flex flex-col gap-1'>

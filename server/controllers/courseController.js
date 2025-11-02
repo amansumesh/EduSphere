@@ -43,3 +43,44 @@ export const getCourseId = async (req, res) => {
     }
 
 } 
+
+// Get Recommended Courses by course id
+export const getCourseRecommendations = async (req, res) => {
+    const { id } = req.params
+    const limit = Math.max(parseInt(req.query.limit || '8', 10), 1)
+
+    try {
+        const baseCourse = await Course.findById(id)
+        if (!baseCourse) {
+            return res.json({ success: false, message: 'Course not found' })
+        }
+
+        const labelPool = new Set([...(baseCourse.tags || [])])
+
+        const orClauses = []
+        // Same educator
+        if (baseCourse.educator) {
+            orClauses.push({ educator: baseCourse.educator })
+        }
+        // Overlapping labels
+        if (labelPool.size > 0) {
+            const labels = Array.from(labelPool)
+            orClauses.push({ tags: { $in: labels } })
+        }
+
+        const query = {
+            _id: { $ne: id },
+            isPublished: true,
+            ...(orClauses.length ? { $or: orClauses } : {})
+        }
+
+        const courses = await Course.find(query)
+            .limit(limit)
+            .select(['-courseContent', '-enrolledStudents'])
+            .populate({ path: 'educator', select: '-password' })
+
+        return res.json({ success: true, courses })
+    } catch (error) {
+        return res.json({ success: false, message: error.message })
+    }
+}

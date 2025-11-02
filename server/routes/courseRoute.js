@@ -1,5 +1,5 @@
 import express from 'express'
-import { getAllCourse, getCourseId } from '../controllers/courseController.js';
+import { getAllCourse, getCourseId, getCourseRecommendations } from '../controllers/courseController.js';
 
 
 const courseRouter = express.Router()
@@ -9,6 +9,9 @@ courseRouter.get('/all', getAllCourse)
 
 // Get Course Data By Id
 courseRouter.get('/:id', getCourseId)
+
+// Get Recommended Courses for a Course
+courseRouter.get('/:id/recommendations', getCourseRecommendations)
 
 
 export default courseRouter;

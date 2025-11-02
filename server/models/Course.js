@@ -24,6 +24,7 @@ const courseSchema = new mongoose.Schema({
     isPublished: { type: Boolean, default: true },
     discount: { type: Number, required: true, min: 0, max: 100 },
     courseContent: [chapterSchema], 
+    tags: [{ type: String, trim: true }],
     educator: {
         type: String,
         ref: 'User',
