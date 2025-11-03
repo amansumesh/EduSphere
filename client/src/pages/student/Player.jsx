@@ -23,6 +23,7 @@ const Player = ({ }) => {
   const [playerData, setPlayerData] = useState(null);
   const [initialRating, setInitialRating] = useState(0);
   const [recommendedCourses, setRecommendedCourses] = useState([]);
+  const [congratsCourses, setCongratsCourses] = useState([]);
 
 
   const getCourseData = () => {
@@ -65,6 +66,9 @@ const Player = ({ }) => {
 
       if (data.success) {
         toast.success(data.message)
+        if (data.grantedFreeCourses && data.grantedFreeCourses.length > 0) {
+          setCongratsCourses(data.grantedFreeCourses)
+        }
         getCourseProgress()
       } else {
         toast.error(data.message)
@@ -152,6 +156,19 @@ const Player = ({ }) => {
 
   return courseData ? (
     <>
+
+      {congratsCourses.length > 0 && (
+        <div className='mx-4 sm:mx-10 md:mx-36 mt-4 border border-green-500/30 bg-green-500/10 text-green-200 rounded p-4'>
+          <p className='font-semibold mb-2'>Congratulations!</p>
+          <p className='mb-3'>You have completed 2 courses by this educator. We have enrolled you for free in:</p>
+          <ul className='list-disc pl-5'>
+            {congratsCourses.map(c => (
+              <li key={c._id}>{c.courseTitle}</li>
+            ))}
+          </ul>
+          <button className='mt-3 px-3 py-1 rounded bg-green-600 text-white' onClick={() => setCongratsCourses([])}>Close</button>
+        </div>
+      )}
 
       <div className='p-4 sm:p-10 flex flex-col-reverse md:grid md:grid-cols-2 gap-10 md:px-36'>
         <div className=" text-white" >

@@ -3,7 +3,6 @@ import { AppContext } from '../../context/AppContext'
 import axios from 'axios'
 import { Line } from 'rc-progress';
 import Footer from '../../components/student/Footer';
-import RecommendedCourses from '../../components/student/RecommendedCourses';
 
 const MyEnrollments = () => {
 
@@ -116,13 +115,7 @@ const MyEnrollments = () => {
                 </table>
 
             </div>
-
             <Footer />
-
-            <div className='md:px-36 px-8'>
-                <RecommendedCourses courses={recommendedCourses} />
-            </div>
-
         </>
     )
 }

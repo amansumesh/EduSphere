@@ -115,6 +115,7 @@ export const updateUserCourseProgress = async (req, res) => {
 
         const progressData = await CourseProgress.findOne({ userId, courseId })
 
+        let wasCompletedBefore = false
         if (progressData) {
 
             if (progressData.lectureCompleted.includes(lectureId)) {
@@ -122,6 +123,7 @@ export const updateUserCourseProgress = async (req, res) => {
             }
 
             progressData.lectureCompleted.push(lectureId)
+            wasCompletedBefore = !!progressData.completed
             await progressData.save()
 
         } else {
@@ -134,7 +136,65 @@ export const updateUserCourseProgress = async (req, res) => {
 
         }
 
-        res.json({ success: true, message: 'Progress Updated' })
+        // After updating lecture progress, determine if course is now completed
+        const course = await Course.findById(courseId)
+        const totalLectures = (course?.courseContent || []).reduce((sum, ch) => sum + ((ch.chapterContent || []).length), 0)
+        const refreshedProgress = await CourseProgress.findOne({ userId, courseId })
+        const completedCount = refreshedProgress?.lectureCompleted?.length || 0
+        let newlyCompleted = false
+        if (totalLectures > 0 && completedCount >= totalLectures) {
+            if (!refreshedProgress.completed) {
+                refreshedProgress.completed = true
+                await refreshedProgress.save()
+                newlyCompleted = true
+            }
+        }
+
+        let grantedFreeCourses = []
+        if (newlyCompleted && course) {
+            // Count completed courses by the same educator
+            const allCompleted = await CourseProgress.find({ userId, completed: true })
+            const completedCourseIds = allCompleted.map(p => p.courseId)
+            const sameEducatorCompleted = await Course.find({ _id: { $in: completedCourseIds }, educator: course.educator }).select(['_id'])
+
+            if (sameEducatorCompleted.length >= 2) {
+                // Find target free courses by this educator
+                const freeTargets = await Course.find({
+                    educator: course.educator,
+                    courseTitle: { $regex: /^Aptitude\s*and\s*Soft\s*Skills$/i }, // case-insensitive exact title
+                    isPublished: true
+                })
+                const user = await User.findById(userId)
+
+                for (const targetCourse of freeTargets) {
+                    const alreadyEnrolled = user.enrolledCourses.some(id => id.toString() === targetCourse._id.toString())
+                    if (!alreadyEnrolled) {
+                        // Enroll user for free
+                        user.enrolledCourses.push(targetCourse._id)
+                        targetCourse.enrolledStudents.push(user._id)
+                        await targetCourse.save()
+
+                        // Create zero-amount completed purchase record (optional tracking)
+                        await Purchase.create({
+                            courseId: targetCourse._id,
+                            userId: user._id,
+                            amount: 0,
+                            status: 'completed'
+                        })
+
+                        grantedFreeCourses.push({
+                            _id: targetCourse._id,
+                            courseTitle: targetCourse.courseTitle,
+                            courseThumbnail: targetCourse.courseThumbnail
+                        })
+                    }
+                }
+
+                await user.save()
+            }
+        }
+
+        res.json({ success: true, message: 'Progress Updated', grantedFreeCourses })
 
     } catch (error) {
         res.json({ success: false, message: error.message })
