@@ -9,7 +9,7 @@ const Loading = () => {
     if (path) {
       const timer = setTimeout(() => {
         navigate(`/${path}`);
-      }, 5000);
+      }, 2000);
 
       // Cleanup the timer on component unmount
       return () => clearTimeout(timer);

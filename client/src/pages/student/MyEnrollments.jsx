@@ -2,7 +2,6 @@ import React, { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../../context/AppContext'
 import axios from 'axios'
 import { Line } from 'rc-progress';
-import Footer from '../../components/student/Footer';
 
 const MyEnrollments = () => {
 
@@ -46,29 +45,29 @@ const MyEnrollments = () => {
 
         if (enrolledCourses.length > 0) {
             getCourseProgress()
-            // Fetch recommendations based on a few enrolled courses and merge
-            ;(async () => {
-                try {
-                    const sample = enrolledCourses.slice(0, 3)
-                    const results = await Promise.all(
-                        sample.map((c) => axios.get(`${backendUrl}/api/course/${c._id}/recommendations`))
-                    )
-                    const merged = []
-                    const seen = new Set(enrolledCourses.map(c => c._id))
-                    results.forEach(({ data }) => {
-                        if (data && data.success && Array.isArray(data.courses)) {
-                            data.courses.forEach((rc) => {
-                                if (!seen.has(rc._id)) {
-                                    seen.add(rc._id)
-                                    merged.push(rc)
-                                }
-                            })
-                        }
-                    })
-                    setRecommendedCourses(merged.slice(0, 8))
-                } catch (err) {
-                }
-            })()
+                // Fetch recommendations based on a few enrolled courses and merge
+                ; (async () => {
+                    try {
+                        const sample = enrolledCourses.slice(0, 3)
+                        const results = await Promise.all(
+                            sample.map((c) => axios.get(`${backendUrl}/api/course/${c._id}/recommendations`))
+                        )
+                        const merged = []
+                        const seen = new Set(enrolledCourses.map(c => c._id))
+                        results.forEach(({ data }) => {
+                            if (data && data.success && Array.isArray(data.courses)) {
+                                data.courses.forEach((rc) => {
+                                    if (!seen.has(rc._id)) {
+                                        seen.add(rc._id)
+                                        merged.push(rc)
+                                    }
+                                })
+                            }
+                        })
+                        setRecommendedCourses(merged.slice(0, 8))
+                    } catch (err) {
+                    }
+                })()
         }
 
     }, [enrolledCourses])
@@ -76,7 +75,7 @@ const MyEnrollments = () => {
     return (
         <>
 
-            <div className='md:px-36 px-8 pt-10'>
+            <div className='md:px-8 px-8 pt-10'>
 
                 <h1 className='text-2xl font-semibold'>My Enrollments</h1>
 
@@ -115,7 +114,6 @@ const MyEnrollments = () => {
                 </table>
 
             </div>
-            <Footer />
         </>
     )
 }

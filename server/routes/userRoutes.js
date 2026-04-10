@@ -1,15 +1,17 @@
 import express from 'express'
-import { addUserRating, getUserCourseProgress, getUserData, purchaseCourse, updateUserCourseProgress, userEnrolledCourses } from '../controllers/userController.js';
+import { addUserRating, getUserCourseProgress, getUserData, purchaseCourse, updateUserCourseProgress, updateUserRole, userEnrolledCourses } from '../controllers/userController.js';
+import { protectUser } from '../middlewares/authMiddleware.js';
 
 
 const userRouter = express.Router()
 
 // Get user Data
-userRouter.get('/data', getUserData)
-userRouter.post('/purchase', purchaseCourse)
-userRouter.get('/enrolled-courses', userEnrolledCourses)
-userRouter.post('/update-course-progress', updateUserCourseProgress)
-userRouter.post('/get-course-progress', getUserCourseProgress)
-userRouter.post('/add-rating', addUserRating)
+userRouter.get('/data', protectUser, getUserData)
+userRouter.post('/purchase', protectUser, purchaseCourse)
+userRouter.get('/enrolled-courses', protectUser, userEnrolledCourses)
+userRouter.post('/update-course-progress', protectUser, updateUserCourseProgress)
+userRouter.post('/get-course-progress', protectUser, getUserCourseProgress)
+userRouter.post('/add-rating', protectUser, addUserRating)
+userRouter.post('/update-role', protectUser, updateUserRole)
 
 export default userRouter;

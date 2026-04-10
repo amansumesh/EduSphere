@@ -3,6 +3,30 @@ import { CourseProgress } from "../models/CourseProgress.js"
 import { Purchase } from "../models/Purchase.js"
 import User from "../models/User.js"
 import stripe from "stripe"
+import { clerkClient } from '@clerk/express'
+
+// Update User Role
+export const updateUserRole = async (req, res) => {
+    try {
+        const userId = req.auth.userId
+        const { role } = req.body
+
+        if (!['student', 'educator'].includes(role)) {
+            return res.json({ success: false, message: 'Invalid Role' })
+        }
+
+        await clerkClient.users.updateUserMetadata(userId, {
+            publicMetadata: {
+                role: role,
+            },
+        })
+
+        res.json({ success: true, message: `Your role is now set to ${role}` })
+
+    } catch (error) {
+        res.json({ success: false, message: error.message })
+    }
+}
 
 
 
@@ -69,7 +93,7 @@ export const purchaseCourse = async (req, res) => {
         }]
 
         const session = await stripeInstance.checkout.sessions.create({
-            success_url: `${origin}/loading/my-enrollments`,
+            success_url: `${origin}/loading/student`,
             cancel_url: `${origin}/`,
             line_items: line_items,
             mode: 'payment',

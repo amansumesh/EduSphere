@@ -7,14 +7,14 @@ import humanizeDuration from 'humanize-duration';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import Rating from '../../components/student/Rating';
-import Footer from '../../components/student/Footer';
+import SmallFooter from '../../components/educator/Footer';
 import RecommendedCourses from '../../components/student/RecommendedCourses';
 import Loading from '../../components/student/Loading';
 import { getYouTubeVideoId, defaultYouTubeOptions } from '../../utils/youtubeUtils';
 
 const Player = ({ }) => {
 
-  const { enrolledCourses, backendUrl, getToken, calculateChapterTime, userData, fetchUserEnrolledCourses } = useContext(AppContext)
+  const { enrolledCourses, backendUrl, getToken, calculateChapterTime, userData, fetchUserEnrolledCourses, navigate } = useContext(AppContext)
 
   const { courseId } = useParams()
   const [courseData, setCourseData] = useState(null)
@@ -170,7 +170,13 @@ const Player = ({ }) => {
         </div>
       )}
 
-      <div className='p-4 sm:p-10 flex flex-col-reverse md:grid md:grid-cols-2 gap-10 md:px-36'>
+      <div className='flex flex-col-reverse md:grid md:grid-cols-2 gap-10 p-4 sm:p-10 md:px-36 min-h-[70vh]'>
+        <div className='md:col-span-2'>
+          <div onClick={() => navigate(-1)} className='inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition-all group'>
+            <img src={assets.arrow_icon} className='w-2 group-hover:-translate-x-1 transition-transform rotate-180' alt="" />
+            <span className='text-sm font-medium'>Back</span>
+          </div>
+        </div>
         <div className=" text-white" >
           <h2 className="text-xl font-semibold">Course Structure</h2>
           <div className="pt-5">
@@ -234,13 +240,13 @@ const Player = ({ }) => {
           }
         </div>
       </div>
-      <div className='px-4 sm:px-10 md:px-36'>
+      <div className='px-4 sm:px-10 md:px-36 pb-4'>
         <RecommendedCourses
           courses={recommendedCourses}
           note={courseData ? `Recommended because you watched ${courseData.courseTitle}` : ''}
         />
       </div>
-      <Footer />
+      <SmallFooter />
     </>
   ) : <Loading />
 }

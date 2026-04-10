@@ -19,7 +19,7 @@ const CourseDetails = () => {
   const [playerData, setPlayerData] = useState(null)
   const [isAlreadyEnrolled, setIsAlreadyEnrolled] = useState(false)
 
-  const { backendUrl, currency, userData, calculateChapterTime, calculateCourseDuration, calculateRating, calculateNoOfLectures } = useContext(AppContext)
+  const { backendUrl, currency, userData, navigate, calculateChapterTime, calculateCourseDuration, calculateRating, calculateNoOfLectures } = useContext(AppContext)
   const { getToken } = useAuth()
 
 
@@ -103,6 +103,10 @@ const CourseDetails = () => {
         <div className="absolute top-0 left-0 w-full h-section-height -z-1 bg-brand-gradient pointer-events-none"></div>
 
         <div className="max-w-xl z-10 text-gray-300">
+          <div onClick={() => navigate(-1)} className='inline-flex items-center gap-2 px-4 py-2 bg-white/5 border border-white/10 rounded-xl cursor-pointer hover:bg-white/10 transition-all mb-6 group'>
+            <img src={assets.arrow_icon} className='w-2 group-hover:-translate-x-1 transition-transform rotate-180' alt="" />
+            <span className='text-sm font-medium'>Back</span>
+          </div>
           <h1 className="md:text-course-deatails-heading-large text-course-deatails-heading-small font-semibold text-white">
             {courseData.courseTitle}
           </h1>
@@ -178,11 +182,11 @@ const CourseDetails = () => {
         <div className="max-w-course-card z-10 shadow-custom-card rounded-t md:rounded-none overflow-hidden bg-white/5 border border-white/10 min-w-[300px] sm:min-w-[420px]">
           {
             playerData
-              ? <YouTube 
-                  videoId={playerData.videoId} 
-                  opts={previewYouTubeOptions} 
-                  iframeClassName='w-full aspect-video' 
-                />
+              ? <YouTube
+                videoId={playerData.videoId}
+                opts={previewYouTubeOptions}
+                iframeClassName='w-full aspect-video'
+              />
               : <img src={courseData.courseThumbnail} alt="" />
           }
           <div className="p-5">

@@ -17,7 +17,7 @@ export const AppContextProvider = (props) => {
     const { user } = useUser()
 
     const [showLogin, setShowLogin] = useState(false)
-    const [isEducator,setIsEducator] = useState(false)
+    const [isEducator, setIsEducator] = useState(false)
     const [allCourses, setAllCourses] = useState([])
     const [userData, setUserData] = useState(null)
     const [enrolledCourses, setEnrolledCourses] = useState([])
@@ -153,7 +153,7 @@ export const AppContextProvider = (props) => {
         enrolledCourses, fetchUserEnrolledCourses,
         calculateChapterTime, calculateCourseDuration,
         calculateRating, calculateNoOfLectures,
-        isEducator,setIsEducator
+        isEducator, setIsEducator
     }
 
     return (

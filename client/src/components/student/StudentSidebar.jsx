@@ -3,17 +3,16 @@ import { NavLink } from 'react-router-dom';
 import { assets } from '../../assets/assets';
 import { AppContext } from '../../context/AppContext';
 
-const SideBar = ({ showSidebar }) => {
-  const { isEducator } = useContext(AppContext);
+const StudentSidebar = ({ showSidebar }) => {
+  const { userData } = useContext(AppContext);
 
   const menuItems = [
-    { name: 'Dashboard', path: '/educator', icon: assets.home_icon },
-    { name: 'Add Course', path: '/educator/add-course', icon: assets.add_icon },
-    { name: 'My Courses', path: '/educator/my-courses', icon: assets.my_course_icon },
-    { name: 'Enrolled Students', path: '/educator/student-enrolled', icon: assets.person_tick_icon },
+    { name: 'Dashboard', path: '/student', icon: assets.home_icon },
+    { name: 'My Enrollments', path: '/student/my-enrollments', icon: assets.my_course_icon },
+    { name: 'All Courses', path: '/student/course-list', icon: assets.search_icon },
   ];
 
-  if (!isEducator) return null;
+  if (!userData) return null;
 
   return (
     <div className={`transition-all duration-500 ease-in-out border-r border-white/5 flex flex-col bg-[#0b0b0f]/50 backdrop-blur-xl sticky top-0 left-0 h-screen overflow-hidden
@@ -24,7 +23,7 @@ const SideBar = ({ showSidebar }) => {
           <NavLink
             to={item.path}
             key={item.name}
-            end={item.path === '/educator'}
+            end={item.path === '/student'}
             className={({ isActive }) =>
               `flex items-center gap-4 px-4 py-3.5 rounded-2xl transition-all duration-300 group
               ${isActive 
@@ -33,7 +32,6 @@ const SideBar = ({ showSidebar }) => {
               }`
             }
           >
-            {/* The NavLink's callback pattern for its content */}
             {({ isActive }) => (
               <>
                 <div className={`p-2.5 rounded-xl transition-all duration-300 group-hover:scale-110 flex items-center justify-center
@@ -67,4 +65,4 @@ const SideBar = ({ showSidebar }) => {
   );
 };
 
-export default SideBar;
+export default StudentSidebar;

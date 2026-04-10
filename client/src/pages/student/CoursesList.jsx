@@ -1,14 +1,16 @@
 import React, { useContext, useEffect, useState } from 'react'
-import Footer from '../../components/student/Footer'
+import SmallFooter from '../../components/educator/Footer'
 import { assets } from '../../assets/assets'
 import CourseCard from '../../components/student/CourseCard';
 import { AppContext } from '../../context/AppContext';
-import { useParams } from 'react-router-dom';
+import { useParams, useLocation } from 'react-router-dom';
 import SearchBar from '../../components/student/SearchBar';
 
 const CoursesList = () => {
 
     const { input } = useParams()
+    const location = useLocation();
+    const isDashboard = location.pathname.startsWith('/student');
 
     const { allCourses, navigate } = useContext(AppContext)
 
@@ -34,7 +36,7 @@ const CoursesList = () => {
 
     return (
         <>
-            <div className="relative md:px-36 px-8 pt-20 text-left">
+            <div className={`relative ${isDashboard ? 'md:px-8' : 'md:px-36'} px-8 pt-10 text-left min-h-[70vh]`}>
                 <div className='flex md:flex-row flex-col gap-6 items-start justify-between w-full'>
                     <div>
                         <h1 className='text-4xl font-semibold text-white'>Course List</h1>
@@ -50,7 +52,7 @@ const CoursesList = () => {
                     {filteredCourse.map((course, index) => <CourseCard key={index} course={course} />)}
                 </div>
             </div>
-            <Footer />
+            {!isDashboard && <SmallFooter />}
         </>
     )
 }
