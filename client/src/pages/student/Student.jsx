@@ -12,13 +12,11 @@ const Student = () => {
             <Navbar showSidebar={showSidebar} setShowSidebar={setShowSidebar} bgColor="bg-transparent" />
             <div className='flex flex-1 overflow-hidden'>
                 <StudentSidebar showSidebar={showSidebar} />
-                <div className='flex-1 overflow-y-auto flex flex-col'>
-                    <div className="flex-1">
-                        <Outlet />
-                    </div>
-                    <Footer />
+                <div className='flex-1 overflow-y-auto'>
+                    <Outlet />
                 </div>
             </div>
+            <Footer />
         </div>
     )
 }
