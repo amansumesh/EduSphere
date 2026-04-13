@@ -24,7 +24,7 @@ const Hero = () => {
         transition={{ duration: 0.6, delay: 0.4 }}
         className="text-gray-400 max-w-2xl mx-auto text-lg md:text-xl"
       >
-        We bring together world-class instructors, interactive content, and a supportive community to help you achieve your personal and professional goals.
+        We bring together world-class educators, interactive content, and a supportive community to help you achieve your personal and professional goals.
       </motion.p>
 
       <motion.div
